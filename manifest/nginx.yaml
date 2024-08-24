@@ -21,8 +21,6 @@ spec:
     spec:
       terminationGracePeriodSeconds: 30
 
-      readinessGates:
-      - conditionType: target-health.alb.ingress.k8s.aws/nginx-ingress_nginx-service_80
       containers:
       - name: nginx
         image: nginx:stable-alpine3.20-perl

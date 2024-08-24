@@ -23,22 +23,26 @@ jobs:
           version: 'v1.27.1' 
         id: install
 
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@master
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.ROLE_ARN }}
           aws-region: ap-northeast-2
-          
 
       - name: Update KubeConfig
         run: | 
-              mkdir -p $HOME/.kube
-              echo "$KUBE_CONFIG_DATA" | base64 -d > $HOME/.kube/config
               aws eks update-kubeconfig --region ap-northeast-2 --name spoon-test
 
-      - name: Deploy Nginx to EKS
-        run: kubectl apply -f manifest/nginx.yaml
+      - name: Add and Update Helm Repositories
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
 
-      - name: Deploy Ingress to EKS
-        run: kubectl apply -f manifest/ingress.yaml
+      - name: Deploy Nginx using Helm
+        run: |
+          helm upgrade --install test bitnami/nginx --version 18.1.11 -f ./helm/cvalues.yaml -n test
 
