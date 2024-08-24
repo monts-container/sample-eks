@@ -47,6 +47,6 @@ jobs:
           helm upgrade --install test bitnami/nginx --version 18.1.11 \
             -f ./helm/cvalues.yaml \
             --set ingress.hostname=${{ secrets.HOSTNAME }} \
-            --set ingress.annotations.alb\.ingress\.kubernetes\.io/certificate-arn=${{ secrets.CERTIFICATE_ARN }} \
+            --set ingress.annotations="alb\.ingress\.kubernetes\.io/certificate-arn=${{ secrets.CERTIFICATE_ARN }} \
             -n test
 
