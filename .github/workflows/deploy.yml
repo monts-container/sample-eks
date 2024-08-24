@@ -36,5 +36,9 @@ jobs:
               echo "$KUBE_CONFIG_DATA" | base64 -d > $HOME/.kube/config
               aws eks update-kubeconfig --region ap-northeast-2 --name spoon-test
 
-      - name: Deploy to EKS
+      - name: Deploy Nginx to EKS
         run: kubectl apply -f manifest/nginx.yaml
+
+      - name: Deploy Ingress to EKS
+        run: kubectl apply -f manifest/ingress.yaml
+
