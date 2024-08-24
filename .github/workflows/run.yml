@@ -27,13 +27,14 @@ jobs:
         uses: aws-actions/configure-aws-credentials@master
         with:
           role-to-assume: ${{ secrets.ROLE_ARN }}
-          aws-region: us-east-1
+          aws-region: ap-northeast-2
+          
 
       - name: Update KubeConfig
         run: | 
               mkdir -p $HOME/.kube
               echo "$KUBE_CONFIG_DATA" | base64 -d > $HOME/.kube/config
-              aws eks update-kubeconfig --region us-east-1 --name mycluster 
+              aws eks update-kubeconfig --region ap-northeast-2 --name spoon-test
 
       - name: Deploy to EKS
         run: kubectl run nginx --image=nginx
