@@ -1,0 +1,39 @@
+name: Deployment On EKS Cluster
+
+on: 
+  push: 
+     branches: ['main']
+  pull_request:
+     branches: ['main']   
+permissions:
+  id-token: write
+  contents: read     
+
+jobs:
+  Deploy_On_Cluster:
+    name: Deploy Application On Cluster
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo 
+        uses: actions/checkout@v3  
+
+      - name: Install Kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.27.1' 
+        id: install
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          role-to-assume: ${{ secrets.ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Update KubeConfig
+        run: | 
+              mkdir -p $HOME/.kube
+              echo "$KUBE_CONFIG_DATA" | base64 -d > $HOME/.kube/config
+              aws eks update-kubeconfig --region us-east-1 --name mycluster 
+
+      - name: Deploy to EKS
+        run: kubectl run nginx --image=nginx
