@@ -37,4 +37,4 @@ jobs:
               aws eks update-kubeconfig --region ap-northeast-2 --name spoon-test
 
       - name: Deploy to EKS
-        run: kubectl run nginx --image=nginx
+        run: kubectl apply -f manifest/nginx.yaml
