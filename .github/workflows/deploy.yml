@@ -36,6 +36,8 @@ jobs:
       - name: Update KubeConfig
         run: | 
               aws eks update-kubeconfig --region ap-northeast-2 --name eks-test
+
+
       - name: Check Config
         run: | 
               kubectl get nodes
