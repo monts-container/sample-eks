@@ -35,7 +35,7 @@ jobs:
 
       - name: Update KubeConfig
         run: | 
-              aws eks update-kubeconfig --region ap-northeast-2 --name spoon-test
+              aws eks update-kubeconfig --region ap-northeast-2 --name eks-test
 
       - name: Add and Update Helm Repositories
         run: |
