@@ -150,3 +150,42 @@ resource "kubernetes_deployment" "external_dns" {
   }
 }
 
+resource "kubernetes_namespace" "test" {
+  metadata {
+    name = "test"
+  }
+}
+
+data "aws_acm_certificate" "cert" {
+  domain   = "*.montkim.org"
+  statuses = ["ISSUED"]
+}
+
+resource "helm_release" "nginx" {
+  name       = "test"
+  chart      = "nginx"
+  repository = "https://charts.bitnami.com/bitnami"
+  version    = "18.1.11"
+  namespace  = kubernetes_namespace.test.metadata[0].name
+
+  values = [
+      file("../manifest/cvalues.yaml")
+  ]
+
+
+  set {
+    name  = "ingress.hostname"
+    value = var.hostname
+  }
+
+  set {
+    name  = "ingress.annotations.alb\\.ingress\\.kubernetes\\.io/certificate-arn"
+    value = data.aws_acm_certificate.cert.arn
+  }
+
+  depends_on = [
+    module.eks,
+    kubernetes_namespace.test,
+    helm_release.aws_load_balancer_controller,
+  ]
+}
